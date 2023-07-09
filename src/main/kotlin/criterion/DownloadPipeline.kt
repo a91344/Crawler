@@ -12,6 +12,6 @@ public abstract class DownloadPipeline : DisposablePipeline {
         File(getFileName(crawler)).apply {
             if (!parentFile.exists())
                 parentFile.mkdirs()
-        }.writeBytes(crawler.responseByte())
+        }.writeBytes(crawler.bytes)
     }
 }

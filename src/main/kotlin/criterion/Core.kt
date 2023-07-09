@@ -1,11 +1,13 @@
 package criterion
 
 import basic.ThreadPool
-import java.util.concurrent.TimeUnit
+import request.RequestApi
+import request.RequestStandard
 import kotlin.properties.Delegates
 import kotlin.system.exitProcess
 
 abstract class Core : Runnable {
+    protected lateinit var requestApi: RequestStandard
     protected var isShowErrorLog = true
     protected var threadNumber = 4
     protected var startUrl = ""
@@ -50,6 +52,7 @@ abstract class Core : Runnable {
                     request?.apply {
                         log("error:${e.message} url:${request.url} residue retry count:${request.retryCount}")
                         request.retryCount -= 1
+                        Thread.sleep(300)
                         if (request.retryCount > 0)
                             Crawler.addRequest(request)
                         else
@@ -76,6 +79,11 @@ abstract class Core : Runnable {
 
         init {
             initCore()
+        }
+
+        public fun requestApi(requestApi: RequestStandard): Builder {
+            core.requestApi = requestApi
+            return this
         }
 
         public fun mainPipeline(pipeline: Pipeline): Builder {
@@ -117,6 +125,14 @@ abstract class Core : Runnable {
             return this
         }
 
-        abstract fun build(): Core
+        public fun build(): Core {
+            if (core::requestApi.isLateinit) {
+                core.requestApi = RequestApi()
+            }
+            core.requestApi.init(headers, proxys)
+            return core
+        }
+
+//        abstract fun build(): Core
     }
 }

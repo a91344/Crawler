@@ -20,6 +20,7 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.28'
     implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
     implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.75'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.32"
 }
 
 compileKotlin {

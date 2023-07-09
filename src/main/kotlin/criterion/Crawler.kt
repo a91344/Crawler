@@ -6,15 +6,11 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
-abstract class Crawler {
+class Crawler {
     public var html: Document by Delegates.notNull()
     public var url: String = ""
-    protected lateinit var responseByte: ByteArray
-
+    public var bytes: ByteArray = ByteArray(0)
     private var fields = HashMap<String, Any>()
-
-    public fun responseText() = responseByte.decodeToString()
-    public fun responseByte() = responseByte
 
     fun putField(key: String, value: Any) {
         fields[key] = value

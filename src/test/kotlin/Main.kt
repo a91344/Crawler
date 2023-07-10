@@ -1,10 +1,8 @@
 import basic.CrawlerCore
 import criterion.Crawler
 import criterion.Pipeline
-import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
-import java.sql.Statement
 import kotlin.random.Random
 
 class CuPipeline : Pipeline {
@@ -18,7 +16,7 @@ class CuPipeline : Pipeline {
             println("----------$count------------")
         }
         val next = crawler.html.selectXpath("//a[@class='next']").firstOrNull()?.attr("href") ?: ""
-        if (next.contains("101").not() ?: false)
+        if (next.contains("101").not())
             crawler.addRequest(next)
     }
 

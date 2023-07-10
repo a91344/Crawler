@@ -2,34 +2,33 @@ import criterion.Crawler;
 import criterion.Pipeline;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
-import java.nio.file.FileStore;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class DownloadCPipeline implements Pipeline {
-    private String path = "G:/temp/";
+    private String path = "G:/temp2/";
     private File file = new File("");
     private FileWriter fw;
 
     @Override
     public void progress(@NotNull Crawler crawler) {
         String temp = crawler.getHtml().selectFirst("div#content").toString();
-        String title = crawler.getField("title").toString();
-        if (!file.getName().equals(title + ".txt")) {
-            file = new File(path, title + ".txt");
-            try {
-                if (fw != null) {
-                    fw.flush();
-                    fw.close();
-                }
-                fw = new FileWriter(file, true);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        String title = crawler.getHtml().getElementsByAttribute("title").last().text();
+        title = title + " " + crawler.getHtml().selectFirst("h1.title").text();
+        file = new File(path, title + ".txt");
         try {
+            fw = new FileWriter(file, true);
             fw.write(temp);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }finally {
+            try {
+                fw.flush();
+                fw.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

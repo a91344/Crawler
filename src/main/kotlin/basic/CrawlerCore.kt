@@ -2,17 +2,8 @@ package basic
 
 import criterion.Core
 import criterion.Crawler
-import criterion.Pipeline
-import com.alibaba.fastjson.JSONObject
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
-import request.RequestApi
-import java.io.File
 
 public class CrawlerCore private constructor() : Core() {
 
@@ -20,8 +11,6 @@ public class CrawlerCore private constructor() : Core() {
         return Crawler().apply {
             val response = requestApi.execute(request)
             if (response.code != 200) {
-                throw HttpStatusException("", response.code, url)
-            } else if (response.body == null) {
                 throw HttpStatusException("", response.code, url)
             }
             html = Jsoup.parse(response.body)

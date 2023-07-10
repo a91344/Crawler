@@ -1,7 +1,6 @@
 package request
 
 import criterion.Crawler
-import java.util.HashMap
 
 interface RequestStandard {
 

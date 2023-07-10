@@ -14,8 +14,6 @@ import java.io.File
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 public class RequestApi() : RequestStandard {
     private var clients = ArrayList<OkHttpClient>()

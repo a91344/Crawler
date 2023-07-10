@@ -3,7 +3,6 @@ package criterion
 import org.jsoup.nodes.Document
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
-import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 class Crawler {

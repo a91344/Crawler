@@ -52,7 +52,7 @@ abstract class Core : Runnable {
                     request?.apply {
                         log("error:${e.message} url:${request.url} residue retry count:${request.retryCount}")
                         request.retryCount -= 1
-                        Thread.sleep(300)
+                        Thread.sleep(1500)
                         if (request.retryCount > 0)
                             Crawler.addRequest(request)
                         else

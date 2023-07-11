@@ -3,6 +3,7 @@ package criterion
 import basic.ThreadPool
 import request.RequestApi
 import request.RequestStandard
+import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 import kotlin.system.exitProcess
 
@@ -12,42 +13,35 @@ abstract class Core : Runnable {
     protected var threadNumber = 4
     protected var startUrl = ""
     protected var mainPipeline: Pipeline by Delegates.notNull()
+    protected var consolePipeline: Pipeline? = null
     protected var piplines = ArrayList<Pipeline>()
 
     abstract fun execute(request: Crawler.Request): Crawler
     override fun run() {
-        var isWhile = true
-        while (isWhile) {
+        do {
             ThreadPool.execute(Runnable {
                 var request: Crawler.Request? = null
                 try {
                     request = Crawler.pollRequest()
                     val crawler = execute(request)
                     request.fields?.let { crawler.setFields(it) }
+                    consolePipeline?.progress(crawler)
                     if (request.tag == null) {
                         mainPipeline.progress(crawler)
                     } else {
                         if (request.tag is Pipeline) {
                             (request.tag as Pipeline).progress(crawler)
-                            if (request.tag is DisposablePipeline)
-                                return@Runnable
                         } else {
                             (request.tag as (Crawler) -> Unit).invoke(crawler)
                         }
                     }
-                    piplines.filterIsInstance<DisposablePipeline>().map {
-                        it.progress(crawler)
+                    if (!crawler.next())
                         return@Runnable
-                    }
                     for (pipline in piplines) {
-                        if (pipline is DisposablePipeline) {
-                            pipline.progress(crawler)
-                            return@Runnable
-                        }
                         pipline.progress(crawler)
                     }
                 } catch (e: NullPointerException) {
-                    isWhile = false
+                    return@Runnable
                 } catch (e: Throwable) {
                     request?.apply {
                         log("error:${e.message} url:${request.url} residue retry count:${request.retryCount}")
@@ -60,7 +54,7 @@ abstract class Core : Runnable {
                     }
                 }
             })
-        }
+        } while (ThreadPool.pool.activeCount>0)
         ThreadPool.awaitTermination()
         Crawler.requestQueue.clear()
         exitProcess(0)
@@ -88,6 +82,11 @@ abstract class Core : Runnable {
 
         public fun mainPipeline(pipeline: Pipeline): Builder {
             core.mainPipeline = pipeline
+            return this
+        }
+
+        public fun consolePipeline(pipeline: Pipeline): Builder {
+            core.consolePipeline = pipeline
             return this
         }
 

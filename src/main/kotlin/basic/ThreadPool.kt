@@ -18,7 +18,10 @@ object ThreadPool {
         )
     }
     public fun awaitTermination(){
-        pool.awaitTermination(AWAIT_TERMINATION_TIMEOUT, TimeUnit.SECONDS)
+        while (pool.isTerminating){
+            Thread.sleep(1000)
+        }
+//        pool.awaitTermination(AWAIT_TERMINATION_TIMEOUT, TimeUnit.SECONDS)
     }
 
     public fun execute(runnable: Runnable) {

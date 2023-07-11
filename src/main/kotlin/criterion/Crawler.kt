@@ -10,6 +10,19 @@ class Crawler {
     public var url: String = ""
     public var bytes: ByteArray = ByteArray(0)
     private var fields = HashMap<String, Any>()
+    fun next() = fields["NEXT"] as Boolean
+
+    init {
+        nextPipeline()
+    }
+
+    fun noNextPipeline() {
+        fields["NEXT"] = false
+    }
+
+    fun nextPipeline() {
+        fields["NEXT"] = true
+    }
 
     fun putField(key: String, value: Any) {
         fields[key] = value
@@ -153,6 +166,7 @@ class Crawler {
         var fields: HashMap<String, Any>? = null,
         var retryCount: Int = Companion.retryCount
     ) {
+
         companion object {
             var retryCount = 4
         }

@@ -76,7 +76,7 @@ public class RequestApi() : RequestStandard {
         response.url = request.url
         response.code = responseBoy.code
         response.bytes = responseBoy.body?.bytes() ?: ByteArray(0)
-        response.body = response.bytes.decodeToString()
+        response.body = String(response.bytes,Charsets.UTF_8)
         return response
     }
 
